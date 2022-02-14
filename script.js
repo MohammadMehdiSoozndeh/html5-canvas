@@ -9,6 +9,14 @@ const mouse = {
   y: undefined
 }
 
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+document.addEventListener('resize', () => {
+	canvas.width = window.innerWidth
+	canvas.height = window.innerHeight
+})
+
 canvas.addEventListener('click', (e) => {
 	mouse.x = e.clientX
 	mouse.y = e.clientY
@@ -20,9 +28,9 @@ canvas.addEventListener('click', (e) => {
 canvas.addEventListener('mousemove', (e) => {
 	mouse.x = e.clientX
 	mouse.y = e.clientY
-	for (let i = 0; i < 2; i++) {
+	// for (let i = 0; i < 2; i++) {
 		particlesArray.push(new Particle())
-	}
+	// }
 })
 
 class Particle {
@@ -53,6 +61,22 @@ function handleParticles() {
 	for (let i = 0; i < particlesArray.length; i++) {
 		particlesArray[i].update()
 		particlesArray[i].draw()
+	
+		for (let j = 0; j < particlesArray.length; j++) {
+			const dx = particlesArray[i].x - particlesArray[j].x
+			const dy = particlesArray[i].y - particlesArray[j].y
+			const dist = Math.sqrt(dx * dx + dy * dy)
+			if (dist < 100) {
+				ctx.beginPath()
+				ctx.strokeStyle = particlesArray[i].color
+				ctx.lineWidth = 0.2
+				
+				ctx.moveTo(particlesArray[i].x, particlesArray[i].y)
+				ctx.lineTo(particlesArray[j].x, particlesArray[j].y)
+				ctx.stroke()
+			}
+		}
+
 		if (particlesArray[i].size <= 0.3) {
 			particlesArray.splice(i, 1)
 			i--
